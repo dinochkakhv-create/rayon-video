@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Районное видео</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .header p { opacity: 0.9; }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .telegram-btn {
+            display: inline-block;
+            background: #27A7E7;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            transition: transform 0.3s;
+        }
+        .telegram-btn:hover { transform: scale(1.05); }
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .video-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        .video-card:hover { transform: translateY(-5px); }
+        .video-thumbnail {
+            position: relative;
+            padding-top: 56.25%;
+            background: #f0f0f0;
+        }
+        .video-thumbnail iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-info { padding: 1.5rem; }
+        .video-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .video-author { color: #667eea; font-weight: 600; }
+        .video-date { color: #999; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .stat-number { font-size: 2rem; font-weight: bold; }
+        .stat-label { opacity: 0.9; margin-top: 0.5rem; }
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            padding: 2rem;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .video-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎥 НАШЕ РАЙОННОЕ ВИДЕО</h1>
+        <p>Смотри и выкладывай видео своего района</p>
+    </div>
+
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="videoCount">0</div>
+                <div class="stat-label">Всего видео</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="authorCount">0</div>
+                <div class="stat-label">Авторов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayCount">0</div>
+                <div class="stat-label">За сегодня</div>
+            </div>
+        </div>
+
+        <div class="upload-card">
+            <h2>📤 Хочешь выложить своё видео?</h2>
+            <p>Просто отправь его в Telegram бота!</p>
+            <a href="https://t.me/thePUBLIcATIONONthewhitetube_bot" class="telegram-btn" target="_blank">
+                📱 ОТПРАВИТЬ ВИДЕО
+            </a>
+            <p style="color: #666; margin-top: 1rem;">
+                1. Нажми на кнопку выше<br>
+                2. Отправь видео боту<br>
+                3. Оно сразу появится здесь!
+            </p>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+            <button onclick="showAll()" style="padding: 0.5rem 1rem; border-radius: 5px; border: none; background: white; cursor: pointer;">🆕 Все</button>
+            <button onclick="showToday()" style="padding: 0.5rem 1rem; border-radius: 5px; border: none; background: white; cursor: pointer;">📅 За сегодня</button>
+        </div>
+
+        <div class="video-grid" id="videoGrid">
+            <!-- VIDEO_LIST -->
+            <!-- Сюда бот будет добавлять видео -->
+        </div>
+    </div>
+
+    <div class="footer">
+        Сделано соседями для соседей ❤️
+    </div>
+
+    <script>
+        let videos = [];
+
+        function showAll() {
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = videos.map(v => v.html).join('');
+        }
+
+        function showToday() {
+            const today = new Date().toDateString();
+            const grid = document.getElementById('videoGrid');
+            const todayVideos = videos.filter(v => new Date(v.date).toDateString() === today);
+            grid.innerHTML = todayVideos.map(v => v.html).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('videoCount').textContent = videos.length;
+            const authors = new Set(videos.map(v => v.author));
+            document.getElementById('authorCount').textContent = authors.size;
+            const today = new Date().toDateString();
+            const todayCount = videos.filter(v => new Date(v.date).toDateString() === today).length;
+            document.getElementById('todayCount').textContent = todayCount;
+        }
+
+        // Загружаем видео при старте
+        showAll();
+        updateStats();
+    </script>
+</body>
+</html>
